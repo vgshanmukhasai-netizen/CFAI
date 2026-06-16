@@ -176,8 +176,84 @@ def astar(start, goal):
     return path
 
 
-# Emergency Vehicle Detection
-emergency_detected = True
+# ==================================
+# RFID VEHICLE IDENTIFICATION SYSTEM
+# ==================================
+
+NORMAL_VEHICLES = {
+    "CAR101": "Car",
+    "CAR102": "Car",
+    "BIKE201": "Bike",
+    "BIKE202": "Bike",
+    "AUTO301": "Auto Rickshaw",
+    "BUS401": "Bus",
+    "TRUCK501": "Truck"
+}
+
+EMERGENCY_VEHICLES = {
+    "AMB001": "Ambulance",
+    "AMB002": "Ambulance",
+
+    "POL001": "Police Jeep",
+    "POL002": "Police Jeep",
+
+    "FIRE001": "Fire Truck",
+    "FIRE002": "Fire Truck"
+}
+
+RFID_READ_RANGE = 10  # meters
+
+
+def detect_vehicle(rfid_tag):
+
+    if rfid_tag in EMERGENCY_VEHICLES:
+        return (
+            EMERGENCY_VEHICLES[rfid_tag],
+            True
+        )
+
+    elif rfid_tag in NORMAL_VEHICLES:
+        return (
+            NORMAL_VEHICLES[rfid_tag],
+            False
+        )
+
+    else:
+        return (
+            "Unknown Vehicle",
+            False
+        )
+
+
+print("\n===== RFID VEHICLE DETECTION =====")
+
+rfid_tag = input(
+    "Scan RFID Tag: "
+).strip().upper()
+
+vehicle_distance = float(
+    input(
+        "Enter vehicle distance from RFID reader (meters): "
+    )
+)
+
+if vehicle_distance <= RFID_READ_RANGE:
+
+    vehicle_type, emergency_detected = (
+        detect_vehicle(rfid_tag)
+    )
+
+    print("\nVehicle Type:", vehicle_type)
+
+else:
+
+    print(
+        "\nVehicle Out Of RFID Detection Range"
+    )
+
+    vehicle_type = "Unknown"
+    emergency_detected = False
+
 
 if emergency_detected:
 
@@ -188,7 +264,9 @@ if emergency_detected:
         "AccidentSite"
     )
 
-    print("Emergency Vehicle Detected!")
+    print(
+        f"{vehicle_type} Detected!"
+    )
 
     print(
         "Optimal Route:",
@@ -200,8 +278,13 @@ if emergency_detected:
     )
 
     print(
-        f"Immediate GREEN to "
-        f"{best_lane}"
+        f"Immediate GREEN to {best_lane}"
+    )
+
+else:
+
+    print(
+        "\nNo Emergency Vehicle Detected."
     )
 
 
@@ -220,6 +303,8 @@ print(
     green_times[best_lane],
     "seconds"
 )
+
+print("Vehicle Type:", vehicle_type)
 
 if emergency_detected:
     print("Emergency Priority: ACTIVE")
